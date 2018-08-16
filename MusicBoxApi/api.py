@@ -533,16 +533,22 @@ class NetEase(object):
             log.error(e)
             return []
 
-    def songs_detail_new_api(self, music_ids, bit_rate=320000):
+	def songs_detail_new_api(self, music_ids, header_cookie, bit_rate=320000):
         action = 'http://music.163.com/weapi/song/enhance/player/url?csrf_token='  # NOQA
         self.session.cookies.load()
         csrf = ''
         for cookie in self.session.cookies:
             if cookie.name == '__csrf':
                 csrf = cookie.value
+			header_cookie += cookie.name + "=" + cookie.value + "; "
         if csrf == '':
             notify('You Need Login', 1)
         action += csrf
+
+		print(header_cookie)
+		print(self.header)
+
+		self.header['Cookie'] = header_cookie
         data = {'ids': music_ids, 'br': bit_rate, 'csrf_token': csrf}
         connection = self.session.post(action,
                                        data=encrypted_request(data),
