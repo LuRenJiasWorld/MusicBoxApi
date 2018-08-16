@@ -163,9 +163,9 @@ def geturl(song):
     return url, quality, play_time
 
 
-def geturl_new_api(song):
+def geturl_new_api(song, header_cookie):
     br_to_quality = {128000: 'MD 128k', 320000: 'HD 320k'}
-    alter = NetEase().songs_detail_new_api([song['id']])[0]
+	alter = NetEase().songs_detail_new_api([song['id']], header_cookie)[0]
     url = alter['url']
     quality = br_to_quality.get(alter['br'], '')
     return url, quality
