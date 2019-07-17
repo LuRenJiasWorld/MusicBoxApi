@@ -33,7 +33,7 @@ import Crypto
 try:
     from Crypto.Cipher import AES
 except:
-    sys.modules['Crypto'] = crypto
+    sys.modules['crypto'] = crypto
     from Crypto.Cipher import AES
 
 from Crypto.Cipher import AES
@@ -114,8 +114,10 @@ def encrypted_request(text):
 def aesEncrypt(text, secKey):
     pad = 16 - len(text) % 16
     text = text + chr(pad) * pad
-    encryptor = AES.new(secKey, 2, '0102030405060708')
-    ciphertext = encryptor.encrypt(text)
+    if type(secKey) is str:
+        secKey = bytes(secKey.encode("utf-8"))
+    encryptor = AES.new(secKey, 2, bytes('0102030405060708'.encode("utf-8")))
+    ciphertext = encryptor.encrypt(bytes(text.encode("utf-8")))
     ciphertext = base64.b64encode(ciphertext).decode('utf-8')
     return ciphertext
 
@@ -165,7 +167,7 @@ def geturl(song):
 
 def geturl_new_api(song, header_cookie):
     br_to_quality = {128000: 'MD 128k', 320000: 'HD 320k'}
-	alter = NetEase().songs_detail_new_api([song['id']], header_cookie)[0]
+    alter = NetEase().songs_detail_new_api([song['id']], header_cookie)[0]
     url = alter['url']
     quality = br_to_quality.get(alter['br'], '')
     return url, quality
@@ -533,14 +535,14 @@ class NetEase(object):
             log.error(e)
             return []
 
-	def songs_detail_new_api(self, music_ids, header_cookie, bit_rate=320000):
+    def songs_detail_new_api(self, music_ids, header_cookie, bit_rate=320000):
         action = 'http://music.163.com/weapi/song/enhance/player/url?csrf_token='  # NOQA
         self.session.cookies.load()
         csrf = ''
         for cookie in self.session.cookies:
             if cookie.name == '__csrf':
                 csrf = cookie.value
-			header_cookie += cookie.name + "=" + cookie.value + "; "
+            header_cookie += cookie.name + "=" + cookie.value + "; "
         if csrf == '':
             notify('You Need Login', 1)
         action += csrf
