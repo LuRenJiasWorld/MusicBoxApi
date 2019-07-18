@@ -547,10 +547,7 @@ class NetEase(object):
             notify('You Need Login', 1)
         action += csrf
 
-		print(header_cookie)
-		print(self.header)
-
-		self.header['Cookie'] = header_cookie
+        self.header['Cookie'] = header_cookie
         data = {'ids': music_ids, 'br': bit_rate, 'csrf_token': csrf}
         connection = self.session.post(action,
                                        data=encrypted_request(data),
